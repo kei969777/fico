@@ -665,7 +665,14 @@ func PE2ICO(w io.Writer, path string, cfg ...Config) error {
 
 // check 1bit FLAG of x,y coordinator
 func f(d []byte, x, y, w, h int) byte {
-	return d[(w>>3*((h-1)-y))+(x>>3)] >> uint(0x07-(x&0x07)) & 1
+	index := (w >> 3 * ((h - 1) - y)) + (x >> 3)
+
+	if index < 0 || index >= len(d) {
+		return 0
+	}
+
+	//panic: index out of range
+	return d[index] >> uint(0x07-(x&0x07)) & 1
 }
 
 func convert16BitToARGB(value uint16, mask uint32) color.RGBA {
